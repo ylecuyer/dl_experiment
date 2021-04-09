@@ -7,7 +7,6 @@ class Experiment
       raise('Please provide an experiment name') if name.empty?
       experiment = Experiment.new(name)
       yield(experiment)
-      experiment.raise_on_diff! if rails_test_mode?
       experiment.result
     end
 
@@ -67,7 +66,7 @@ class Experiment
     raise 'Please call the legacy helper in your protocol block' unless @legacy
     raise 'Please call the experiment helper in your protocol block' unless @experiment
     legacy_result = exec(@legacy)
-    return forward(legacy_result) unless self.class.rails_test_mode? || @enable.call
+    return forward(legacy_result) unless @enable.call
     experiment_result = exec(@experiment)
     if @on_diff
       if legacy_result.error.class != experiment_result.error.class ||
